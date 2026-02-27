@@ -77,7 +77,7 @@ pixi run python scripts/01_fetch_gene_info.py
 # 2. Fetch variants
 pixi run python scripts/02_fetch_variants.py
 
-# 3. Fetch population frequencies (limited - requires gnomAD API access)
+# 3. Fetch population frequencies (via MyVariant.info)
 pixi run python scripts/03_fetch_gnomad.py
 
 # 4. Fetch eQTL data (takes 10-20 minutes)
@@ -107,7 +107,7 @@ pixi run python scripts/09_integrate_all.py
 | UniProt | Protein Domains, Features | https://rest.uniprot.org |
 | GTEx Portal | eQTL Associations | https://gtexportal.org/api/v2 |
 | GWAS Catalog | GWAS Associations | https://www.ebi.ac.uk/gwas/rest/api |
-| gnomAD | Population Frequencies | https://gnomad.broadinstitute.org/api |
+| MyVariant.info | gnomAD Frequencies | https://myvariant.info/v1/variant |
 | AlphaFold DB | Predicted Structure | https://alphafold.ebi.ac.uk |
 
 ## Output Files
@@ -136,29 +136,47 @@ Contains all variants with integrated annotations:
 
 ## Limitations
 
-1. **gnomAD**: Direct API access is limited; full population data may require bulk downloads
+1. **gnomAD / MyVariant**: Relies on third-party Elasticsearch aggregation; novel or highly rare variants might occasionally drop.
 2. **pQTL**: Limited free API access; manual curation from literature recommended
 3. **eQTL**: GTEx API may have rate limits; full analysis takes time
 4. **VEP**: Sample subset annotated due to API rate limits
 5. **AlphaFold**: Structure download may fail (URL changes); manual download available
 
-## Next Steps
 
-1. Review high-impact coding variants (missense, nonsense, frameshift)
-2. Investigate variants with both eQTL and GWAS evidence
-3. Examine tissue-specific eQTL patterns
-4. Map coding variants to 3D protein structure
-5. Validate top candidates experimentally
-6. Perform pathway and functional enrichment analysis
-7. Cross-reference with disease databases (ClinVar, OMIM)
 
 ## Configuration
 
-Edit `config.yaml` to customize:
-- API rate limits
-- Significance thresholds (eQTL p-value, MAF cutoffs)
-- Output options
-- Cache behavior
+The pipeline's exact biological thresholds and API behaviors are fully exposed and controlled via `config.yaml`:
+
+### Biological Thresholds
+```yaml
+thresholds:
+  gnomad_af_rare: 0.01        # Allele Frequency (AF) defining "Rare" variants
+  gnomad_af_common: 0.05      # AF bounding "Common" variants
+  eqtl_pvalue: 0.00001        # Minimum p-value to associate a regulatory eQTL 
+  gwas_pvalue: 0.00000005     # Standard genome-wide GWAS significance (< 5x10^-8)
+  sift_deleterious: 0.05      # SIFT score ceiling indicating deleterious mutations
+  polyphen_damaging: 0.45     # PolyPhen score floor establishing damaging impact
+```
+
+### API Behavior and Reliability
+```yaml
+api:
+  rate_limit: 15              # Global requests per second to avoid API ban
+  retry_attempts: 3           # Exponential backoff auto-recovery max attempts
+  retry_delay: 2              # Base wait seconds during an HTTP 429 Rate Limit
+  cache_responses: true       # Prevents duplicate external calls to speed up reruns
+```
+
+### Visual & Output Options
+```yaml
+output:
+  include_non_coding: true        # Track 3' UTR, 5' UTR, and Intron associations
+  min_confidence_domains: 50      # PyMOL AlphaFold pLDDT visualization baseline
+  max_variants_display: 10        # Limit maximum priority points plotted structurally
+```
+
+*(Note: The `sesn2` gene mapping block at the top of the raw `config.yaml` is kept only as a legacy fallback. It is automatically overridden by `run_pipeline.py` during execution).*
 
 ## Troubleshooting
 
@@ -184,7 +202,7 @@ If you use this pipeline, please cite the data sources:
 - GTEx: https://gtexportal.org
 - GWAS Catalog: https://www.ebi.ac.uk/gwas
 - UniProt: https://www.uniprot.org
-- gnomAD: https://gnomad.broadinstitute.org
+- MyVariant: https://myvariant.info
 
 ## License
 
