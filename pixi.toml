@@ -1,0 +1,24 @@
+[workspace]
+channels = ["conda-forge"]
+name = "Sesn2_mutations"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+fetch-all = { cmd = "python scripts/01_fetch_gene_info.py && python scripts/02_fetch_variants.py && python scripts/03_fetch_gnomad.py && python scripts/04_fetch_eqtl.py && python scripts/05_fetch_pqtl.py && python scripts/06_fetch_gwas.py" }
+annotate = { cmd = "python scripts/07_annotate_vep.py && python scripts/08_map_protein_domains.py" }
+integrate = { cmd = "python scripts/09_integrate_all.py" }
+run-all = { depends-on = ["fetch-all", "annotate", "integrate"] }
+
+[dependencies]
+python = ">=3.10,<3.13"
+pandas = ">=2.0"
+numpy = ">=1.24"
+requests = ">=2.31"
+biopython = ">=1.83"
+tqdm = ">=4.66"
+pyyaml = ">=6.0"
+jupyter = ">=1.0"
+matplotlib = ">=3.8"
+seaborn = ">=0.13"
+pymol-open-source = ">=3.1.0,<4"

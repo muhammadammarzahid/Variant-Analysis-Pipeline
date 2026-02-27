@@ -1,0 +1,27 @@
+sesn2:
+  gene_id: ENSG00000130766
+  uniprot_id: P58004
+  symbol: SESN2
+  chromosome: "1"
+  start: 28259473
+  end: 28282491
+  canonical_transcript: ENST00000253063
+  
+thresholds:
+  gnomad_af_rare: 0.01
+  gnomad_af_common: 0.05
+  eqtl_pvalue: 0.00001
+  gwas_pvalue: 0.00000005
+  sift_deleterious: 0.05
+  polyphen_damaging: 0.45
+  
+api:
+  rate_limit: 15  # requests per second
+  retry_attempts: 3
+  retry_delay: 2  # seconds
+  cache_responses: true
+  
+output:
+  include_non_coding: true
+  min_confidence_domains: 50  # AlphaFold pLDDT threshold
+  max_variants_display: 10
