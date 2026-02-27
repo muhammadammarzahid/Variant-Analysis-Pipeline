@@ -131,7 +131,20 @@ Contains all variants with integrated annotations:
 4. **variants_annotated.csv**: VEP functional predictions (SIFT, PolyPhen)
 5. **summary_report.txt**: Human-readable analysis summary
 6. **summary_stats.json**: Summary statistics in JSON format
+### Visualizing 3D Protein Structures (PyMOL)
 
+The final script (`11_visualize_structure.py`) automatically downloads the AlphaFold structure for your gene and builds an automated visualization script (`structures/visualize_mutations.pml`) that maps your highest-impact mutations directly onto the 3D model.
+
+You can launch this visualization directly from your terminal using pixi:
+```bash
+cd structures
+pixi run pymol visualize_mutations.pml
+```
+
+Alternatively, you can load it from within the PyMOL GUI:
+1. Open the PyMOL application.
+2. Go to **File** -> **Run Script...**
+3. Select the heavily annotated `structures/visualize_mutations.pml` file.
 
 
 ## Limitations
