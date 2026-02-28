@@ -135,6 +135,19 @@ Contains all variants with integrated annotations:
 
 The final script (`11_visualize_structure.py`) automatically downloads the AlphaFold structure for your gene and builds an automated visualization script (`structures/visualize_mutations.pml`) that maps your highest-impact mutations directly onto the 3D model.
 
+Variants are prioritized and colored into strict biological tiers to highlight structural importance vs. natural population tolerance:
+
+1. **Tier 1: Clinical/GWAS (Red Spheres)**
+   - Known pathogenic clinical variants or strong GWAS hits. These are established phenotypically disruptive mutations.
+2. **Tier 2: Dual-Evidence Rare (Orange Spheres)**
+   - Deleterious by **both** SIFT and PolyPhen-2 AND Rare (MAF < 1%). These indicate strong negative evolutionary selection due to heavy structural disruption.
+3. **Tier 3: Dual-Evidence Common (Magenta Spheres)**
+   - Deleterious by **both** algorithms BUT Common (MAF > 1%). Highly interesting structural "blind spots" where human populations survive widespread mutation despite algorithm warnings (often specificity-tuning edge variants).
+4. **Tier 4: eQTL Missense (Yellow Spheres)**
+   - Missense variants that are also strong eQTLs (`p < 1e-5`). Links structural stability to RNA expression levels.
+5. **Tier 5: Common Tolerated (Cyan Spheres)**
+   - Common variants (MAF > 1%) mathematically predicted as safe. Highlights structurally flexible, tolerant regions of the protein (loops/surfaces).
+
 You can launch this visualization directly from your terminal using pixi:
 ```bash
 cd structures
